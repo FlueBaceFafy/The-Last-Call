@@ -24,18 +24,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int rowCeiling;
     [SerializeField] private int rowFloor;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private void GenerateGrid(int columns, int rows) 
     {
         foreach (Transform child in buttonContainer)
@@ -63,6 +51,12 @@ public class GameManager : MonoBehaviour
     {
         if (int.TryParse(columnsInputField.text, out int columns) && int.TryParse(rowsInputField.text, out int rows))
         {
+            if ((columns * rows) % 2 != 0)
+            {
+                Debug.Log("The total number of buttons must be an even number. Please adjust the rows or columns.");
+                return;
+            }
+
             if (columnCeiling > columns && columnFloor < columns && rowCeiling > rows && rowFloor < rows)
             {
                 GenerateGrid(columns, rows);

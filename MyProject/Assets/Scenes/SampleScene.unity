@@ -416,6 +416,7 @@ MonoBehaviour:
   rowsInputField: {fileID: 735325454}
   beginButton: {fileID: 1621660994}
   buttonPrefab: {fileID: 5565293427459390753, guid: a21b64c29ede6264fb6d49ec81d84d1b, type: 3}
+  layoutChoicePanel: {fileID: 923855365}
   buttonContainer: {fileID: 1466028878}
   cellSize: {x: 100, y: 100}
   spacing: {x: 10, y: 10}
