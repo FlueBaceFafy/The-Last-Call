@@ -2,16 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameManager;
 
 public class GridButton : MonoBehaviour
 {
-    [SerializeField] private Sprite[] spritesArray = new Sprite[5];
     [SerializeField] private GameObject hiddenImageGO;
     [SerializeField] private Image hiddenImage;
+    public string assignedValue { get; private set; }
+
 
     private void Awake()
     {
-        AssignRandomSprite();
+        //AssignRandomSprite();
     }
 
     public void RevealImage() 
@@ -22,14 +24,10 @@ public class GridButton : MonoBehaviour
         }
     }
 
-    private void AssignRandomSprite() 
+    public void AssignSpriteData(SpriteData data) 
     {
-        if (spritesArray == null || spritesArray.Length == 0) 
-        {
-            Debug.Log($"no sprites assigned on {gameObject.name}");
-            return;
-        }
-
-        hiddenImage.sprite = spritesArray[Random.Range(0, spritesArray.Length)];
+        hiddenImage.sprite = data.sprite;
+        assignedValue = data.value;
+        hiddenImageGO.SetActive(false);
     }
 }

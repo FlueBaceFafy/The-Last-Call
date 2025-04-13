@@ -6,6 +6,13 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class SpriteData 
+    {
+        public string value;
+        public Sprite sprite;
+    }
+
     [Header("GameSettings")]
     [SerializeField] private TMP_InputField columnsInputField;
     [SerializeField] private TMP_InputField rowsInputField;
@@ -24,26 +31,56 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int rowCeiling;
     [SerializeField] private int rowFloor;
 
-    private void GenerateGrid(int columns, int rows) 
+    [Header("Sprites")]
+    [SerializeField] private List<SpriteData> spriteDataList = new List<SpriteData>();
+
+
+    private List<SpriteData> CreateShuffledPairs(int totalButtons)
     {
-        foreach (Transform child in buttonContainer)
+        int pairCount = totalButtons / 2;
+        List<SpriteData> selectedPairs = new List<SpriteData>();
+
+        List<SpriteData> available = new List<SpriteData>(spriteDataList);
+
+        for (int i = 0; i < pairCount; i++)
         {
-            Destroy(child.gameObject);
+            int index = Random.Range(0, available.Count);
+            SpriteData selected = available[index];
+            selectedPairs.Add(selected);
+            selectedPairs.Add(selected);
         }
 
-        GridLayoutGroup gridLayout = buttonContainer.GetComponent<GridLayoutGroup>();
+        for (int i = 0; i < selectedPairs.Count; i++)
+        {
+            int rnd = Random.Range(i, selectedPairs.Count);
+            (selectedPairs[i], selectedPairs[rnd]) = (selectedPairs[rnd], selectedPairs[i]);
+        }
 
+        return selectedPairs;
+    }
+    private void GenerateGrid(int columns, int rows)
+    {
+        foreach (Transform child in buttonContainer)
+            Destroy(child.gameObject);
+
+        GridLayoutGroup gridLayout = buttonContainer.GetComponent<GridLayoutGroup>();
         gridLayout.cellSize = cellSize;
         gridLayout.spacing = spacing;
-
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         gridLayout.constraintCount = columns;
-        
 
-        for (int i = 0; i < rows * columns; i++)
+        List<SpriteData> pairs = CreateShuffledPairs(columns * rows);
+
+        for (int i = 0; i < pairs.Count; i++)
         {
             GameObject newButton = Instantiate(buttonPrefab, buttonContainer);
             newButton.name = $"Button_{i}";
+
+            GridButton gridButton = newButton.GetComponent<GridButton>();
+            if (gridButton != null)
+            {
+                gridButton.AssignSpriteData(pairs[i]);
+            }
         }
     }
 
