@@ -166,13 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 471addc190d75fe49ad081e0ba1ea7c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spritesArray:
-  - {fileID: 727136321, guid: c82cf8129f1c8ec46bf82dece2dbe849, type: 3}
-  - {fileID: -2143255163, guid: c82cf8129f1c8ec46bf82dece2dbe849, type: 3}
-  - {fileID: -1563939851, guid: c82cf8129f1c8ec46bf82dece2dbe849, type: 3}
-  - {fileID: 999199534, guid: c82cf8129f1c8ec46bf82dece2dbe849, type: 3}
-  - {fileID: -1424854077, guid: c82cf8129f1c8ec46bf82dece2dbe849, type: 3}
   hiddenImageGO: {fileID: 3066356625653850568}
+  coatImageGO: {fileID: 8972684974681708554}
   hiddenImage: {fileID: 6133209764325587531}
 --- !u!1 &8972684974681708554
 GameObject:
@@ -298,7 +293,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7446245872700204803}
         m_TargetAssemblyTypeName: GridButton, Assembly-CSharp
-        m_MethodName: RevealImage
+        m_MethodName: OnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

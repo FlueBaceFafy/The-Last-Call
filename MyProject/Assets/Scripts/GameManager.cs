@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.ParticleSystem;
 
 public class GameManager : MonoBehaviour
 {
     [System.Serializable]
-    public class SpriteData 
+    public class SpriteData
     {
         public string value;
         public Sprite sprite;
@@ -34,6 +36,51 @@ public class GameManager : MonoBehaviour
     [Header("Sprites")]
     [SerializeField] private List<SpriteData> spriteDataList = new List<SpriteData>();
 
+    [Header("Score Values")]
+    [SerializeField] private TextMeshProUGUI matchesText;
+    [SerializeField] private TextMeshProUGUI turnsText;
+    private int matches = 0;
+    private int turns = 0;
+
+    private List<GridButton> selectedButtons = new List<GridButton>();
+
+    public void OnBegin()
+    {
+        if (int.TryParse(columnsInputField.text, out int columns) && int.TryParse(rowsInputField.text, out int rows))
+        {
+            if ((columns * rows) % 2 != 0)
+            {
+                Debug.Log("The total number of buttons must be an even number. Please adjust the rows or columns.");
+                return;
+            }
+
+            if (columnCeiling > columns && columnFloor < columns && rowCeiling > rows && rowFloor < rows)
+            {
+                GenerateGrid(columns, rows);
+                layoutChoicePanel.SetActive(false);
+            }
+        }
+        else
+        {
+            Debug.Log("invalid input");
+        }
+    }
+
+    public void SelectButton(GridButton gridButton)
+    {
+        if (selectedButtons.Contains(gridButton) || selectedButtons.Count >= 2)
+        {
+            return;
+        }
+
+        gridButton.RevealImage();   
+        selectedButtons.Add(gridButton);
+
+        if (selectedButtons.Count == 2)
+        {
+            StartCoroutine(CheckMatch());
+        }
+    }
 
     private List<SpriteData> CreateShuffledPairs(int totalButtons)
     {
@@ -58,6 +105,7 @@ public class GameManager : MonoBehaviour
 
         return selectedPairs;
     }
+
     private void GenerateGrid(int columns, int rows)
     {
         foreach (Transform child in buttonContainer)
@@ -80,29 +128,35 @@ public class GameManager : MonoBehaviour
             if (gridButton != null)
             {
                 gridButton.AssignSpriteData(pairs[i]);
+                gridButton.Initialize(this);
             }
         }
     }
 
-    public void OnBegin()
+    private IEnumerator CheckMatch()
     {
-        if (int.TryParse(columnsInputField.text, out int columns) && int.TryParse(rowsInputField.text, out int rows))
-        {
-            if ((columns * rows) % 2 != 0)
-            {
-                Debug.Log("The total number of buttons must be an even number. Please adjust the rows or columns.");
-                return;
-            }
+        yield return new WaitForSeconds(0.5f);
 
-            if (columnCeiling > columns && columnFloor < columns && rowCeiling > rows && rowFloor < rows)
-            {
-                GenerateGrid(columns, rows);
-                layoutChoicePanel.SetActive(false);
-            }
+        GridButton firstButton = selectedButtons[0];
+        GridButton secondButton = selectedButtons[1];
+
+        turns++;
+        turnsText.text = $"Turns: \n{turns}";
+
+        if (firstButton.assignedValue == secondButton.assignedValue)
+        {
+            Debug.Log($"{firstButton.name} and {secondButton.name} have matched!");
+            firstButton.DisableImage();
+            secondButton.DisableImage();
+            matches++;
+            matchesText.text = $"Turns: \n{matches}";
         }
         else
         {
-            Debug.Log("invalid input");
+            firstButton.HideImage();
+            secondButton.HideImage();
         }
+
+        selectedButtons.Clear();
     }
 }
