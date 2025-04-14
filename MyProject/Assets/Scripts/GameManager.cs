@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button beginButton;
     [SerializeField] private GameObject buttonPrefab;
     [SerializeField] private GameObject layoutChoicePanel;
+    [SerializeField] private GameObject winScreenPanel;
 
     [Header("Grid Settings")]
     [SerializeField] private RectTransform buttonContainer;
@@ -80,6 +81,15 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(CheckMatch());
         }
+    }
+
+    public void ExitGame()
+    {
+        winScreenPanel.SetActive(false);
+        matches = 0;
+        turns = 0;
+        matchesText.text = "Matches: \n 0";
+        turnsText.text = "Turns: \n 0";
     }
 
     private List<SpriteData> CreateShuffledPairs(int totalButtons)
@@ -149,7 +159,13 @@ public class GameManager : MonoBehaviour
             firstButton.DisableImage();
             secondButton.DisableImage();
             matches++;
-            matchesText.text = $"Turns: \n{matches}";
+            matchesText.text = $"Matches: \n{matches}";
+
+            int totalPairs = (buttonContainer.childCount) / 2;
+            if(matches == totalPairs) 
+            {
+                winScreenPanel.SetActive(true);
+            }
         }
         else
         {
@@ -159,4 +175,6 @@ public class GameManager : MonoBehaviour
 
         selectedButtons.Clear();
     }
+
+
 }
