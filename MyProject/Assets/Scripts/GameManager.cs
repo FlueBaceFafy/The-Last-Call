@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.ParticleSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -44,14 +42,6 @@ public class GameManager : MonoBehaviour
     private int matches = 0;
     private int turns = 0;
 
-    /*[Header("Audio")]
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip backgroundSound;
-    [SerializeField] private AudioClip flipSound;
-    [SerializeField] private AudioClip matchSound;
-    [SerializeField] private AudioClip mismatchSound;
-    [SerializeField] private AudioClip winSound;*/
-
     private List<GridButton> selectedButtons = new List<GridButton>();
 
 
@@ -85,7 +75,6 @@ public class GameManager : MonoBehaviour
         }
 
         gridButton.RevealImage();
-        //audioSource.PlayOneShot(flipSound);
         selectedButtons.Add(gridButton);
 
         if (selectedButtons.Count == 2)
@@ -184,7 +173,6 @@ public class GameManager : MonoBehaviour
         if (firstButton.assignedValue == secondButton.assignedValue)
         {
             Debug.Log($"{firstButton.name} and {secondButton.name} have matched!");
-            //audioSource.PlayOneShot(matchSound);
             firstButton.DisableImage();
             secondButton.DisableImage();
             matchesPerRound++;
@@ -195,14 +183,12 @@ public class GameManager : MonoBehaviour
             if(matchesPerRound == totalPairs) 
             {
                 winScreenPanel.SetActive(true);
-                //audioSource.PlayOneShot(winSound);
                 matchesPerRound = 0;
                 ClearBoard();
             }
         }
         else
         {
-            //audioSource.PlayOneShot(mismatchSound);
             firstButton.HideImage();
             secondButton.HideImage();
         }
