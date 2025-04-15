@@ -40,10 +40,20 @@ public class GameManager : MonoBehaviour
     [Header("Score Values")]
     [SerializeField] private TextMeshProUGUI matchesText;
     [SerializeField] private TextMeshProUGUI turnsText;
+    private int matchesPerRound = 0;
     private int matches = 0;
     private int turns = 0;
 
+    /*[Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip backgroundSound;
+    [SerializeField] private AudioClip flipSound;
+    [SerializeField] private AudioClip matchSound;
+    [SerializeField] private AudioClip mismatchSound;
+    [SerializeField] private AudioClip winSound;*/
+
     private List<GridButton> selectedButtons = new List<GridButton>();
+
 
     public void OnBegin()
     {
@@ -74,7 +84,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        gridButton.RevealImage();   
+        gridButton.RevealImage();
+        //audioSource.PlayOneShot(flipSound);
         selectedButtons.Add(gridButton);
 
         if (selectedButtons.Count == 2)
@@ -85,11 +96,28 @@ public class GameManager : MonoBehaviour
 
     public void ExitGame()
     {
+        ClearBoard();
         winScreenPanel.SetActive(false);
+        matchesPerRound = 0;
         matches = 0;
         turns = 0;
         matchesText.text = "Matches: \n 0";
         turnsText.text = "Turns: \n 0";
+    }
+
+    public void StartNewGame() 
+    {
+        ClearBoard();
+        layoutChoicePanel.SetActive(true);
+    }
+
+    public void QuitGameButton() 
+    {
+    #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+    #else
+            Application.Quit();
+    #endif
     }
 
     private List<SpriteData> CreateShuffledPairs(int totalButtons)
@@ -156,19 +184,25 @@ public class GameManager : MonoBehaviour
         if (firstButton.assignedValue == secondButton.assignedValue)
         {
             Debug.Log($"{firstButton.name} and {secondButton.name} have matched!");
+            //audioSource.PlayOneShot(matchSound);
             firstButton.DisableImage();
             secondButton.DisableImage();
+            matchesPerRound++;
             matches++;
             matchesText.text = $"Matches: \n{matches}";
 
             int totalPairs = (buttonContainer.childCount) / 2;
-            if(matches == totalPairs) 
+            if(matchesPerRound == totalPairs) 
             {
                 winScreenPanel.SetActive(true);
+                //audioSource.PlayOneShot(winSound);
+                matchesPerRound = 0;
+                ClearBoard();
             }
         }
         else
         {
+            //audioSource.PlayOneShot(mismatchSound);
             firstButton.HideImage();
             secondButton.HideImage();
         }
@@ -176,5 +210,13 @@ public class GameManager : MonoBehaviour
         selectedButtons.Clear();
     }
 
+    private void ClearBoard()
+    {
+        foreach (Transform child in buttonContainer)
+        {
+            Destroy(child.gameObject);
+        }
 
+        selectedButtons.Clear();
+    }
 }
